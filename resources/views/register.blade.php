@@ -11,7 +11,7 @@
       <form action="submit" id="form" method="post">
         @csrf
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Full name" id="user_name" name="user_name">
+          <input type="text" class="form-control" placeholder="Full name" id="name" name="name">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>

@@ -23,11 +23,11 @@
             <section class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        @foreach($select_user as $user_details)
+                
                         <div class="col-sm-6">
-                            <h1>Welcome {{$user_details->name}}</h1>
+                            <h1>Welcome {{$select_user->name}}</h1>
                         </div>
-                        @endforeach
+                      
                     </div>
                 </div>
             </section>

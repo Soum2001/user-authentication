@@ -10,63 +10,58 @@ use Illuminate\Support\Facades\Hash;
 
 class RegistrationController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth_middleware');
-    //     $this->user = Auth::User();
-    // }
-    function Register(Request $request)
+    
+    function register(Request $request)
     {
-    $user            = new User;
-    $user->name      = $request->user_name;
-    $hashedPassword  = Hash::make($request->password);
-    $user->password  = $hashedPassword;
-    //Hash::make('secret');
-    $user->email     = $request->email;
-    if($user->save())
-    {
-        return view('login')->with(array('success'=> 1,'load'=>'login'));
+        $input = $request->all();
+        $hashedPassword  = Hash::make($request->password);
+        $input['password']  = $hashedPassword;
+        $user = User::create($input);
+        if ($user) {
+            session()->put('id', $user['id']);
+            return view('login')->with(array('success' => 1, 'load' => 'login'));
+        }
     }
-    }
+
     function loadRegistrationPage()
     {
         return view('register');
     }
     public function authenticate(Request $request)
     {
+  
+        $user = User::select()->where('email',$request->email)->get();
+        session()->put('id', $user[0]['id']);
         $credentials = $request->only('email', 'password');
-        session()->put('email',$request->email );
         if (Auth::attempt($credentials)) {
-            // Authentication passed...
             return redirect()->intended('home');
         }
     }
     function homePage()
     {
-        $email = session('email');
-        $select =  $select = User::select('name','email')->where('email',$email)->get();
-        return view('home')->with(array('select_user'=>$select));
+        $id = session('id');
+        $user =  User::find($id);
+        return view('home')->with(array('select_user' => $user));
     }
-    function edit_page()
+    function editPage()
     {
-        $email = session('email');
-        $select = User::select('name','email')->where('email',$email)->get();
-        return view('edit_profile_page')->with(array('select_user'=>$select,'success'=>0));
+        $id = session('id');
+        $user = User::find($id);
+        return view('edit_profile_page')->with(array('select_user' => $user, 'success' => 0));
     }
-    function edit_details(Request $request)
+    function editDetails(Request $request)
     {
-        $email = session('email');
-        $update = User::where('email',$email)
-        ->update(array('name' => $request->user_name, 'email' => $request->email));
-        $select = User::select('name','email')->where('email',$email)->get();
-        if($update)
-        {
-            return view('edit_profile_page')->with(array('success'=>1 ,'select_user'=>$select));
+        $id = session('id');
+        $update = User::where('id', $id)
+            ->update(array('name' => $request->user_name, 'email' => $request->email));
+
+        $user = User::find($id);
+        if ($update) {
+            return view('edit_profile_page')->with(array('success' => 1, 'select_user' => $user));
         }
     }
     public function logOut(Request $request)
     {
-        //echo ('hi');
         $request->session()->flush();
         Auth::logout();
         return redirect('/');

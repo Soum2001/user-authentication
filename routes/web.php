@@ -29,7 +29,7 @@ Route::get('/', function () {
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('register',[RegistrationController::class,'loadRegistrationPage']);
-Route::post('submit',[RegistrationController::class,'Register']);
+Route::post('submit',[RegistrationController::class,'register']);
 Route::post('login',[RegistrationController::class,'authenticate']);
 
 Route::group(['middleware'=>['web','user_auth']],function(){
@@ -39,8 +39,8 @@ Route::group(['middleware'=>['web','user_auth']],function(){
 });
 
 
-Route::get('edit',[RegistrationController::class,'edit_page']);
+Route::get('edit',[RegistrationController::class,'editPage']);
 
-Route::post('profile',[RegistrationController::class,'edit_details']);
+Route::post('profile',[RegistrationController::class,'editDetails']);
 
 Route::get('logout', [RegistrationController::class, 'logOut']);
